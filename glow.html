@@ -1,0 +1,65 @@
+<html>
+<head>
+</head>
+<body>
+<canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"></canvas> 
+<script>
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.font = "20px Arial";
+ctx.fillText("Click to count", 35, 40);
+ctx.fillText("deep breaths", 35, 70);
+var count = 0
+var limit = 30;
+var seconds = 0;
+var int;
+var holdLimit = 60; // change as you get better
+
+c.addEventListener('click', function(event) {
+  ctx.fillStyle = "green";
+  ctx.fillRect(0, 0, 200, 100);
+  count = count + 1;
+  ctx.font = "20px Arial";
+  ctx.fillText("breathe", 5, 45);
+  ctx.font = "50px Arial";
+  ctx.fillStyle = "black";
+  ctx.fillText("  " + count, 55, 65);
+  if (count==limit + 1){
+  	count = count+1;
+  	ctx.clearRect(0, 0, 200, 100);
+	ctx.font = "20px Arial";  
+	ctx.fillStyle = "red";
+  	ctx.fillRect(0, 0, 200, 100);
+	ctx.fillStyle = "black";
+	ctx.fillText("hold", 25, 45);
+  	int = setInterval(incTimer,1000);
+  }
+}, false);
+function fill(x){
+	ctx.strokeStyle = "grey";
+	ctx.beginPath();
+	ctx.moveTo(x, 0);
+	ctx.lineTo(x, 100);
+	ctx.stroke(); 
+}
+function incTimer(){
+	seconds += 1;
+	//console.log(seconds); 
+	ctx.fillStyle = "red";
+  	ctx.fillRect(0, 0, 200, 100);
+	ctx.fillStyle = "black";
+	ctx.font = "20px Arial";
+	ctx.fillText("hold", 25, 45);
+	ctx.font = "50px Arial";
+	ctx.fillText("  " + seconds, 55, 65);
+	if (seconds==holdlimit+1){
+		clearInterval(int);
+  		ctx.clearRect(0, 0, 200, 100);
+  		count = 0; // allow whole program to start again
+  		seconds = 0;
+	}
+	return seconds;
+}
+</script> 
+</body>
+</html>
