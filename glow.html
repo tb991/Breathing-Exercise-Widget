@@ -1,65 +1,97 @@
 <html>
 <head>
+<style>
+::selection {
+    background-color: transparent;
+}
+</style>
 </head>
 <body>
 <canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"></canvas> 
+<p id="prompt">Begin your breathing exercise.</p>
 <script>
+
+var count = 0; // current number of exhalations in stage 1
+var stage = 0; // before beginning 
+let exhalelimit = 30; // 30 is the correct setting but 5 is for debugging
+var sessions = 0;
+
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
+
+/* small settings */
 ctx.font = "20px Arial";
-ctx.fillText("Click to count", 35, 40);
-ctx.fillText("deep breaths", 35, 70);
-var count = 0
-var limit = 30;
-var seconds = 0;
-var int;
-var holdLimit = 60; // change as you get better
+c.width = 200;
+c.height = 100;
+/*
+
+make everything larger
+
+*/
+
+c.width = 600;
+c.height = 400;
+ctx.font = "50px Arial";
+
+// modifiable positionsd
+
+// some screen data...
+
+ctx.fillText("Click to count", c.width/4, c.height/2);
+ctx.fillText("deep breaths", c.width/4, c.height*3/2);
+
+// click responses
 
 c.addEventListener('click', function(event) {
-  ctx.fillStyle = "green";
-  ctx.fillRect(0, 0, 200, 100);
-  count = count + 1;
-  ctx.font = "20px Arial";
-  ctx.fillText("breathe", 5, 45);
-  ctx.font = "50px Arial";
-  ctx.fillStyle = "black";
-  ctx.fillText("  " + count, 55, 65);
-  if (count==limit + 1){
-  	count = count+1;
-  	ctx.clearRect(0, 0, 200, 100);
-	ctx.font = "20px Arial";  
-	ctx.fillStyle = "red";
-  	ctx.fillRect(0, 0, 200, 100);
-	ctx.fillStyle = "black";
-	ctx.fillText("hold", 25, 45);
-  	int = setInterval(incTimer,1000);
-  }
-}, false);
-function fill(x){
-	ctx.strokeStyle = "grey";
-	ctx.beginPath();
-	ctx.moveTo(x, 0);
-	ctx.lineTo(x, 100);
-	ctx.stroke(); 
-}
-function incTimer(){
-	seconds += 1;
-	//console.log(seconds); 
-	ctx.fillStyle = "red";
-  	ctx.fillRect(0, 0, 200, 100);
-	ctx.fillStyle = "black";
-	ctx.font = "20px Arial";
-	ctx.fillText("hold", 25, 45);
-	ctx.font = "50px Arial";
-	ctx.fillText("  " + seconds, 55, 65);
-	if (seconds==holdlimit+1){
-		clearInterval(int);
-  		ctx.clearRect(0, 0, 200, 100);
-  		count = 0; // allow whole program to start again
-  		seconds = 0;
+	// this is the transition from loading the page to starting the exercise
+	// and also this is the transition to the 30 breaths section
+	if ((stage == 0 || stage == 1) && count < exhalelimit){
+		// if this is the first click then change the program stage
+		if (stage == 0){
+			stage = 1;
+		}
+		// count the breaths for the user
+		count += 1;
+		// clear the previous screen
+		ctx.fillStyle = "green";
+		ctx.fillRect(0, 0, c.width, c.height);
+		// show the breathing tally
+		ctx.font = "100px Arial";
+		ctx.fillStyle = "white";
+		ctx.fillText("  " + count, c.width/4, c.height/2);
+		document.getElementById("prompt").innerHTML = "Breathe thirty times deeply."
 	}
-	return seconds;
-}
+	// this marks the point where the user should be holding his breath after the 30th exhalation
+	else if (count  == exhalelimit){
+		if (stage == 1){
+			stage = 2;
+			
+			ctx.fillStyle = "red";
+			ctx.fillRect(0, 0, c.width, c.height);
+			
+			count += 1;
+			document.getElementById("prompt").innerHTML = "Now hold your breath."
+		}
+	}
+	// this is after the deep exhalation that follows the 30 breaths and the fifteen second pause
+	else if (count > exhalelimit){
+		if (stage == 2){
+			stage = 3;
+			
+			ctx.fillStyle = "yellow";
+			ctx.fillRect(0, 0, c.width, c.height);
+			document.getElementById("prompt").innerHTML = "Now inhale then hold your breath";
+		}
+		else if (stage == 3){
+			stage = 0;
+			count = 0;
+			ctx.fillStyle = "black";
+			ctx.fillRect(0, 0, c.width, c.height);
+			document.getElementById("prompt").innerHTML = "Click again to start over";
+		}
+	}
+}, false);
+
 </script> 
 </body>
 </html>
